@@ -1,0 +1,609 @@
+grammar {
+	uuid = '{93717C58-B497-439C-8B9B-A019E6C5D0F4}';
+	name = 'SQL';
+	filter = 'sql';
+	developer = 'Garnet';
+	version = '0.1';
+	range {
+		name = 'sql';
+		style = 'source.sql';
+		rule {
+			name = 'sql.table';
+			style = 'entity.name.type';
+			pattern = '\b[\w\d]+(?=\.)';
+		}
+		keywords {
+			name = 'sql.keyword';
+			style = 'keyword.sql';
+			{
+absolute
+action
+active
+actor
+against
+add
+after
+alias
+all
+allocate
+alter
+and
+any
+are
+as
+asc
+ascending
+assertion
+async
+at
+attributes
+auto
+auto_increment
+base_name
+before
+begin
+between
+bit
+bit_length
+boolean
+both
+breadth
+by
+cache
+call
+cascade
+cascaded
+case
+cast
+catalog
+char_length
+character_length
+character_set
+check
+close
+coalesce
+collate
+collation
+column
+commit
+committed
+completion
+computed
+conditional
+connect
+connection
+constraint
+constraints
+containing
+convert
+corresponding
+count
+create
+cross
+current
+current_date
+current_path
+current_time
+current_timestamp
+current_user
+cursor
+cycle
+data
+database
+date
+datetime
+day
+deallocate
+debug
+declare
+default
+deferrable
+deferred
+delete
+delimiter
+depth
+desc
+descending
+describe
+descriptor
+destroy
+diagnostics
+dictionary
+disconnect
+distinct
+do
+domain
+drop
+each
+element
+else
+elseif
+end
+end-exec
+entry_point
+equals
+escape
+except
+exception
+execute
+exists
+exit
+external
+extract
+factor
+false
+fetch
+filter
+first
+for
+foreign
+found
+from
+full
+function
+general
+generator
+get
+global
+grant
+group
+having
+hold
+hour
+identity
+if
+ignore
+immediate
+in
+inactive
+index
+initially
+inner
+input
+insensitive
+insert
+instead
+int
+intersect
+interval
+into
+is
+isolation
+join
+key
+last
+leading
+leave
+left
+less
+level
+like
+limit
+list
+local
+loop
+lower
+match
+merge
+minute
+mode
+modify
+month
+names
+national
+natural
+nchar
+new
+new_table
+next
+no
+none
+not
+null
+nullif
+object
+octet_length
+of
+off
+old
+old_table
+on
+only
+open
+operation
+operator
+operators
+or
+order
+others
+outer
+output
+overlaps
+pad
+parameter
+parameters
+partial
+password
+path
+pendant
+plan
+position
+postfix
+prefix
+preorder
+prepare
+preserve
+primary
+prior
+private
+privileges
+procedure
+protected
+read
+recursive
+ref
+references
+referencing
+relative
+replace
+resignal
+restrict
+retain
+return
+returns
+revoke
+right
+role
+rollback
+routine
+row
+rows
+savepoint
+schema
+scroll
+search
+second
+select
+sensitive
+sequence
+session
+session_user
+set
+shadow
+shared
+signal
+similar
+size
+snapshot
+some
+space
+sqlexception
+sqlstate
+sqlwarning
+start
+state
+structure
+substring
+suspend
+symbol
+system_user
+table
+temporary
+term
+test
+text
+then
+there
+time
+timestamp
+timezone_hour
+timezone_minute
+tinyint
+to
+trailing
+transaction
+translate
+translation
+trigger
+trim
+true
+tuple
+type
+uncommitted
+under
+union
+unique
+unknown
+unsigned
+update
+upper
+usage
+user
+using
+value
+values
+varchar
+variable
+varying
+view
+virtual
+visible
+wait
+when
+where
+while
+with
+without
+work
+write
+year
+zone
+			}
+		}
+		keywords {
+			name = 'sql.function';
+			style = 'entity.name.method';
+			{
+abs
+acos
+add
+adddate
+addtime
+ascii
+asin
+atan
+atan2
+avg
+bin
+bit_and
+bit_count
+bit_length
+bit_or
+bit_xor
+case
+cast
+character_length
+ceiling
+char_length
+coalesce
+coercibility
+compress
+concat
+concat_ws
+connection_id
+conv
+convert_tz
+cos
+cot
+count
+crc32
+curdate
+current_date
+current_time
+current_timestamp
+current_user
+curtime
+date_add
+date_format
+date_sub
+datediff
+day
+dayname
+dayofmonth
+dayofweek
+dayofyear
+day_hour
+day_minute
+day_second
+decode
+degrees
+elt
+encode
+encrypt
+exp
+export_set
+extract
+extractvalue
+field
+find_in_set
+floor
+format
+found_rows
+from_days
+from_unixtime
+get_format
+get_lock
+greatest
+group_concat
+hex
+hour
+hour_minute
+hour_second
+if
+ifnull
+in
+inet_aton
+insert_id
+instr
+interval
+isnull
+is_free_lock
+is_used_lock
+last_day
+last_insert_id
+lcase
+least
+left
+length
+ln
+load_file
+localtime
+localtimestamp
+locate
+log
+log10
+log2
+lower
+lpad
+ltrim
+makedate
+maketime
+make_set
+master_pos_log
+master_pos_wait
+max
+md5
+microsecond
+mid
+min
+minute
+minute_second
+month
+monthname
+now
+nullif
+oct
+octet_length
+ord
+password
+period_add
+period_diff
+pi
+position
+pow
+power
+quarter
+quote
+radians
+rand
+release_lock
+repeat
+reverse
+right
+round
+row_count
+rpad
+rtrim
+second
+sec_to_time
+session_user
+sign
+sin
+soundex
+sleep
+space
+spatial
+sqrt
+std
+stddev
+stddev_pop
+stddev_samp
+strcmp
+str_to_date
+subdate
+substring
+substring_index
+subtime
+sum
+sysdate
+system_user
+tan
+timediff
+timestampadd
+timestampdiff
+time_format
+time_to_sec
+to_days
+trim
+truncate
+ucase
+uncompress
+uncompressed_length
+unhex
+unix_timestamp
+updatexml
+upper
+user
+utc_date
+utc_time
+utc_timestamp
+uuid
+variance
+var_pop
+var_samp
+version
+week
+weekday
+weekofyear
+when
+yearweek
+year_month
+			}
+		}
+		link {
+			rule = 'php.string.variable';
+		}
+		link {
+			rule = 'php.string.variable.complex';
+		}
+		range {
+			name = 'sql.string.apostroph';
+			style = 'string.quoted.other';
+			options = '8';
+			open {
+				pattern = '`';
+				options = '1';
+			}
+			close {
+				pattern = '`';
+				options = '1';
+			}
+			close {
+				pattern = '$';
+			}
+		}
+		range {
+			name = 'sql.string.quoted.single';
+			style = 'string.quoted.single';
+			options = '8';
+			open {
+				pattern = ''';
+				options = '1';
+			}
+			close {
+				pattern = ''';
+				options = '1';
+			}
+			close {
+				pattern = '$';
+			}
+		}
+	}
+	outlining {
+		{
+			open = '\b(?<token>begin)\b';
+			close = '\b(?<token>end)\b(?>;)?(?!\s*?loop|\s*?if)';
+			open_token = 'sql.keyword';
+		}
+		{
+			name = 'Condition';
+			open = '^\s*?\b(?<token>if)\b';
+			close = '\b(?<token>end)\b\s*?if\b';
+			open_token = 'sql';
+			close_token = 'sql.keyword';
+		}
+		{
+			name = 'Loop';
+			open = '(?<!end\s)\b(?<token>loop)\b';
+			close = '\b(?<token>end)\b\s*?loop\b';
+			open_token = 'sql.keyword';
+		}
+	}
+	matching {
+		{
+			open = '(';
+			close = ')';
+			open_token = 'sql.symbol';
+		}
+	}
+}

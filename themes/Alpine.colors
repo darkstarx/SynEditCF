@@ -1,0 +1,186 @@
+colors {
+	uuid = '{3DA3664F-D8B4-4287-807A-3CFB4BC86AC4}';
+	name = 'Alpine';
+	developer = 'Garnet';
+	version = '0.5';
+	text {
+		background = 'clWhite';
+		foreground = 'clBlack';
+		style = '0';
+	}
+	selection {
+		background = '#d6e0f4';
+		foreground = 'clNone';
+		style = '1';
+	}
+	line {
+		background = 'clNone';
+		foreground = 'clNone';
+		style = '1';
+	}
+	invisibles {
+		background = 'clNone';
+		foreground = 'clNone';
+		style = '0';
+	}
+	margin {
+		background = 'clNone';
+		foreground = '#cccccc';
+		style = '0';
+	}
+	outlining {
+		background = 'clNone';
+		foreground = '#cccccc';
+		style = '0';
+	}
+	diff.added {
+		background = '#e1ffe1';
+		foreground = 'clNone';
+		style = '0';
+	}
+	diff.removed {
+		background = '#ffe1e1';
+		foreground = 'clNone';
+		style = '0';
+	}
+	diff.changed {
+		background = '#ffffe1';
+		foreground = 'clNone';
+		style = '0';
+	}
+	symbol, operator {
+		background = 'clNone';
+		foreground = 'clBlack';
+		style = '0';
+	}
+	comment {
+		background = 'clNone';
+		foreground = '#787480';
+		style = '2';
+	}
+	comment.note {
+		background = '#ffebeb';
+		foreground = '#787480';
+		style = '2';
+	}
+	constant.other {
+		background = 'clNone';
+		foreground = '#dc9300';
+		style = '1';
+	}
+	keyword, meta.tag.markup, entity.name.tag.markup {
+		background = 'clNone';
+		foreground = '#204a87';
+		style = '1';
+	}
+	keyword.second, variable.other.prefix, keyword.ruleset.css {
+		background = 'clNone';
+		foreground = '#7c4787';
+		style = '1';
+	}
+	keyword.third, keyword.sql.embedded {
+		background = 'clNone';
+		foreground = '#4e9a06';
+		style = '1';
+	}
+	constant.numeric, digit {
+		background = 'clNone';
+		foreground = '#d20062';
+		style = '0';
+	}
+	variable {
+		background = 'clNone';
+		foreground = '#318495';
+		style = '1';
+	}
+	entity.name.method {
+		background = 'clNone';
+		foreground = '#4e9a06';
+		style = '1';
+	}
+	entity.name.method.type {
+		background = 'clNone';
+		foreground = '#0080c0';
+		style = '1';
+	}
+	entity.name.type, keyword.control.at-rule, entity.other.attribute-name.pseudo-class {
+		background = 'clNone';
+		foreground = '#960082';
+		style = '1';
+	}
+	constant.character {
+		background = 'clNone';
+		foreground = '#aa4228';
+		style = '0';
+	}
+	string {
+		background = 'clNone';
+		foreground = '#aa4228';
+		style = '0';
+	}
+	string.interpolation {
+		background = 'clNone';
+		foreground = '#c80000';
+		style = '0';
+	}
+	preprocessor, comment.block.documentation {
+		background = 'clNone';
+		foreground = '#06989a';
+		style = '0';
+	}
+	preprocessor.directive, comment.block.documentation.tag {
+		background = 'clNone';
+		foreground = '#0080c0';
+		style = '1';
+	}
+	entity.other.attribute-name.markup {
+		background = 'clNone';
+		foreground = 'clBlue';
+		style = '0';
+	}
+	string.markup {
+		background = 'clNone';
+		foreground = 'clGreen';
+		style = '0';
+	}
+	invalid {
+		background = '#ef2929';
+		foreground = '#eeeeec';
+		style = '0';
+	}
+	uri {
+		background = 'clNone';
+		foreground = 'clNone';
+		style = '4';
+	}
+	embedded, source.php {
+		background = '#f9f9f9';
+		foreground = 'clBlack';
+		style = '0';
+	}
+	source.css.embedded {
+		background = '#fffff0';
+		foreground = 'clBlack';
+		style = '0';
+	}
+	meta.ruleset.css.embedded {
+		background = '#ffffe1';
+		foreground = 'clBlack';
+		style = '0';
+	}
+	source.js.embedded {
+		background = '#f6f6ff';
+		foreground = 'clBlack';
+		style = '0';
+	}
+	source.markup.embedded {
+		background = '#fbf2ff';
+		foreground = '#aa4228';
+		style = '0';
+	}
+	source.sql.embedded {
+		background = '#f3f4fa';
+		foreground = '#aa4228';
+		style = '0';
+	}
+}

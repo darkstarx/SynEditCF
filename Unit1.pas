@@ -36,7 +36,6 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-
 begin
   myEditor := TSynEdit.Create(self);
 
@@ -59,13 +58,12 @@ begin
   // Если попытаться вставить текст этого модуля, появятся иероглифы и другая дрянь
 
   myHighlighter := TSynUniSyn.Create(myEditor);
-  myHighlighter.LoadGrammar(
-    'C:\Users\Сергей\AppData\Roaming\Letterpress\packages\Delphi.package\delphi.grammar',
+  myHighlighter.LoadGrammar('..\..\SQL.package\sql.grammar',
     true, nil, 'sql', [suloExternalGrammars], '');
 
   myEditor.Highlighter := myHighlighter;
 
-  myTheme := TSynHighlighterTheme.Create('C:\Users\Сергей\AppData\Roaming\Letterpress\themes\Alpine.colors');
+  myTheme := TSynHighlighterTheme.Create('..\..\themes\Alpine.colors');
   myHighlighter.LoadFromFile(myTheme);
 
   myEditor.Text := 'select * from myTable' + #13#10 + 'where Name like ''%world!'';';
