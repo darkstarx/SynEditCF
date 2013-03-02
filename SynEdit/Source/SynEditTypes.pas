@@ -100,6 +100,9 @@ type
   function BufferCoord(AChar, ALine: Integer): TBufferCoord;
 
   function CaretsEqual(const C1, C2: TBufferCoord): Boolean;
+  function CaretInRange(const C, B, E: TBufferCoord; Inclusive: Boolean): Boolean;
+  function CaretBefore(const C1, C2: TBufferCoord): Boolean;
+  function CaretAfter(const C1, C2: TBufferCoord): Boolean;
 
 implementation
 
@@ -156,6 +159,25 @@ end;
 function CaretsEqual(const C1, C2: TBufferCoord): Boolean;
 begin
   Result := (C1.Line = C2.Line) and (C1.Char = C2.Char);
+end;
+
+function CaretInRange(const C, B, E: TBufferCoord; Inclusive: Boolean): Boolean;
+begin
+  Result := ((C.Line > B.Line) or ((C.Line = B.Line) and
+    (C.Char > B.Char - Ord(Inclusive)))) and ((C.Line < E.Line) or
+    ((C.Line = E.Line) and (C.Char < E.Char + Ord(Inclusive))));
+end;
+
+function CaretBefore(const C1, C2: TBufferCoord): Boolean;
+begin
+  Result := (C1.Line < C2.Line) or ((C1.Line = C2.Line) and
+    (C1.Char < C2.Char));
+end;
+
+function CaretAfter(const C1, C2: TBufferCoord): Boolean;
+begin
+  Result := (C1.Line > C2.Line) or ((C1.Line = C2.Line) and
+    (C1.Char > C2.Char));
 end;
 
 end.

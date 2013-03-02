@@ -12,6 +12,7 @@ type
   TForm1 = class(TForm)
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -33,6 +34,11 @@ begin
   FreeAndNil(myHighlighter);
   FreeAndNil(myTheme);
   FreeAndNil(myEditor);
+end;
+
+procedure TForm1.FormClick(Sender: TObject);
+begin
+  myEditor.Gutter.Visible := true;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);

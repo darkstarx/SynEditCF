@@ -12,6 +12,7 @@ object Form1: TForm1
   Font.Style = []
   OldCreateOrder = False
   Position = poDesigned
+  OnClick = FormClick
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96

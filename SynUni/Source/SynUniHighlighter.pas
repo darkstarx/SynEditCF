@@ -2897,8 +2897,10 @@ var
         bBackreferenced := NewRegion.CloseBackreference and (NewRegion.Kind = frikNormal);
 
         { Read patterns }
-        if IsTagRead(sOpenPtrn) then begin NewRegion.Open := GetValue(sOpenPtrn); RdLn; end else if NewRegion.Kind = frikNormal then Exit;
-        if IsTagRead(sClosePtrn) then begin NewRegion.Close := GetValue(sClosePtrn); RdLn; end else if NewRegion.Kind = frikNormal then Exit;
+        if IsTagRead(sOpenPtrn) then begin NewRegion.Open := GetValue(sOpenPtrn); RdLn; end
+        else if NewRegion.Kind = frikNormal then Exit;
+        if IsTagRead(sClosePtrn) then begin NewRegion.Close := GetValue(sClosePtrn); RdLn; end
+        else if NewRegion.Kind = frikNormal then Exit;
 
         { Read open token kind }
         if IsTagRead(sOpenTkn) then
