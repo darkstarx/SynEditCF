@@ -5262,9 +5262,6 @@ begin
     Delta := TopLine - Value;
     FTopLine := Value;
 
-    { Auto-size gutter width }
-    GutterWidth := Length(IntToStr(RowToLine(FTopLine + FLinesInWindow)));
-
     if Abs(Delta) < FLinesInWindow then
 {$IFDEF SYN_CLX}
     begin

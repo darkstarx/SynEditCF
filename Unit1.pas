@@ -59,6 +59,9 @@ begin
   myEditor.Gutter.ShowLineStates := true;    // << эта фигня не работает
   myEditor.Gutter.ShowCodeFolding := true;   // << эта фигня тоже не работает
 
+  myEditor.Gutter.DigitCount := 2;
+  myEditor.Gutter.AutoSize := true;
+
   // SpellChecker тоже нихрена не работает, его пока вообще нет в SynEdit-е
 
   // Если попытаться вставить текст этого модуля, появятся иероглифы и другая дрянь
