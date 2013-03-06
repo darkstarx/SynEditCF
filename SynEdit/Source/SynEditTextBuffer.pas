@@ -65,7 +65,8 @@ uses
 type
   TSynEditRange = pointer;
 
-  TSynEditStringFlag = (sfHasTabs, sfHasNoTabs, sfExpandedLengthUnknown);
+  TSynEditStringFlag = (sfHasTabs, sfHasNoTabs, sfExpandedLengthUnknown,
+    sfModified, sfSaved, sfParsed);
   TSynEditStringFlags = set of TSynEditStringFlag;
 
   PSynEditStringRec = ^TSynEditStringRec;
@@ -75,11 +76,12 @@ type
     {$ELSE}
     FString: UnicodeString;
     {$ENDIF OWN_UnicodeString_MEMMGR}
-    fObject: TObject;
-    fRange: TSynEditRange;
-    fExpandedLength: Integer;
-    fCharIndex : Integer;
-    fFlags: TSynEditStringFlags;
+    FObject: TObject;
+    FRange: TSynEditRange;
+    FAnalyzis: PBArray;
+    FExpandedLength: Integer;
+    FCharIndex : Integer;
+    FFlags: TSynEditStringFlags;
   end;
 
   TSynEditTwoWideChars = record
@@ -123,6 +125,8 @@ type
     fOnInserted: TStringListChangeEvent;
     fOnPutted: TStringListChangeEvent;
     function ExpandString(Index: integer): UnicodeString;
+    procedure AnalyzeString(Index: Integer);
+    function GetAnalyzis(Index: Integer): PBArray;
     function GetExpandedString(Index: integer): UnicodeString;
     function GetExpandedStringLength(Index: integer): integer;
     function GetLengthOfLongestLine: Integer;
@@ -181,6 +185,7 @@ type
 
     property AppendNewLineAtEOF: Boolean read fAppendNewLineAtEOF write fAppendNewLineAtEOF;
 
+    property Analyzis[Index: Integer]: PBArray read GetAnalyzis;
     property FileFormat: TSynEditFileFormat read fFileFormat write SetFileFormat;
     property ExpandedStrings[Index: integer]: UnicodeString read GetExpandedString;
     property ExpandedStringLengths[Index: integer]: integer read GetExpandedStringLength;
@@ -390,6 +395,23 @@ begin
   end;
 end;
 
+procedure TSynEditStringList.AnalyzeString(Index: Integer);
+var
+  I: Integer;
+begin
+  FList^[Index].FExpandedLength := 0;
+  SetLength(FList^[Index].FAnalyzis^, Length(FList^[Index].FString));
+  for I := 1 to Length(FList^[Index].FAnalyzis^) do
+  begin
+    if FList^[Index].FString[I] = #9 then
+      FList^[Index].FAnalyzis^[I - 1] := FTabWidth - (FList^[Index].FExpandedLength mod FTabWidth)
+    else
+      FList^[Index].FAnalyzis^[I - 1] := CharWidthTable(FList^[Index].FString[I]);
+    Inc(FList^[Index].FExpandedLength, FList^[Index].FAnalyzis^[I - 1]);
+  end;
+  FList^[Index].FFlags := FList^[Index].FFlags + [sfExpandedLengthUnknown];
+end;
+
 procedure TSynEditStringList.Clear;
 {$IFDEF OWN_UnicodeString_MEMMGR}
 var
@@ -551,6 +573,18 @@ begin
     {$ENDIF OWN_UnicodeString_MEMMGR}
   else
     Result := '';
+end;
+
+function TSynEditStringList.GetAnalyzis(Index: Integer): PBArray;
+begin
+  if (Index < 0) or (Index >= FCount) then
+  begin
+    Result := nil;
+    Exit;
+  end;
+  if sfExpandedLengthUnknown in FList^[Index].FFlags then
+    AnalyzeString(Index);
+  Result := FList^[Index].FAnalyzis;
 end;
 
 procedure TSynEditStringList.UpdateCharIndexes;

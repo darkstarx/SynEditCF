@@ -906,19 +906,29 @@ type
     function IsIdentChar(AChar: WideChar): Boolean; virtual;
     function IsWhiteChar(AChar: WideChar): Boolean; virtual;
     function IsWordBreakChar(AChar: WideChar): Boolean; virtual;
+
+    // Paint methods
     procedure InvalidateGutter;
+    procedure InvalidateSelection;
+
+    // Line-based
     procedure InvalidateGutterLine(aLine: integer);
     procedure InvalidateGutterLines(aFirstLine, aLastLine: integer);
     procedure InvalidateLine(Line: integer);
     procedure InvalidateLines(aFirstLine, aLastLine: integer);
-    procedure InvalidateSelection;
+
     function IsBookmark(BookMark: Integer): Boolean;
     function IsPointInSelection(const Value: TBufferCoord): Boolean;
     procedure LockUndo;
+
     function BufferToDisplayPos(const p: TBufferCoord): TDisplayCoord;
+    function BufferToRealDisplayPos(const P: TBufferCoord): TDisplayCoord;
     function DisplayToBufferPos(const p: TDisplayCoord): TBufferCoord;
+    function RealDisplayToBufferPos(const P: TDisplayCoord): TBufferCoord;
+
     function LineToRow(aLine: Integer): Integer;
     function RowToLine(aRow: Integer): Integer;
+
     procedure Notification(AComponent: TComponent;
       Operation: TOperation); override;
     procedure PasteFromClipboard;
@@ -1881,8 +1891,10 @@ function TCustomSynEdit.GetSelText: UnicodeString;
     end;
   end;
 
-  procedure CopyAndForward(const S: UnicodeString; Index, Count: Integer; var P:
-    PWideChar);
+  // Returns how much chars actually have been copied. It can happen that it
+  // it will be less than Count
+  procedure CopyAndForward(const S: UnicodeString; Index, Count: Integer;
+    var P: PWideChar);
   var
     pSrc: PWideChar;
     SrcLen: Integer;
@@ -1900,6 +1912,8 @@ function TCustomSynEdit.GetSelText: UnicodeString;
     end;
   end;
 
+  // Copies text from Index of Count chars and pads it with spaces if there
+  // were less than Count copied
   function CopyPaddedAndForward(const S: UnicodeString; Index, Count: Integer;
     var P: PWideChar): Integer;
   var
@@ -1910,7 +1924,8 @@ function TCustomSynEdit.GetSelText: UnicodeString;
     OldP := P;
     CopyAndForward(S, Index, Count, P);
     Len := Count - (P - OldP);
-    if not (eoTrimTrailingSpaces in Options) then
+    // Was anything copied at all or Index was behind line length?
+    if not (eoTrimTrailingSpaces in Options) and (P - OldP > 0) then
     begin
       for i := 0 to Len - 1 do
         P[i] := #32;
@@ -1920,28 +1935,32 @@ function TCustomSynEdit.GetSelText: UnicodeString;
       Result:= Len;
   end;
 
-var
-  First, Last, TotalLen: Integer;
-  ColFrom, ColTo: Integer;
-  I: Integer;
-  l, r: Integer;
-  s: UnicodeString;
-  P: PWideChar;
-  cRow: Integer;
-  vAuxLineChar: TBufferCoord;
-  vAuxRowCol: TDisplayCoord;
-  vTrimCount: Integer;
-begin
-  if not SelAvail and not FSelections then
-    Result := ''
-  else if FSelections then
+  // Returns true if a row specified is actually a wrapped row, not an unique
+  // string
+  function IsWrappedRow(aLine, aRow: Integer): Boolean;
+  begin
+    if WordWrap then
+      Result := FWordWrapPlugin.LineToRealRow(aLine) <> aRow
+    else
+      Result := False;
+  end;
+
+  function DoGetSelText: UnicodeString;
+  var
+    First, Last, TotalLen: Integer;
+    ColFrom, ColTo: Integer;
+    I, L, R: Integer;
+    S: UnicodeString;
+    P: PChar;
+    cRow: Integer;
+    vAuxLineChar: TBufferCoord;
+    vAuxRowCol: TDisplayCoord;
+    vTrimCount: Integer;
   begin
     ColFrom := BlockBegin.Char;
     First := BlockBegin.Line - 1;
-    //
     ColTo := BlockEnd.Char;
     Last := BlockEnd.Line - 1;
-    //
     TotalLen := 0;
     case FActiveSelectionMode of
       smNormal:
@@ -1949,11 +1968,12 @@ begin
           Result := Copy(Lines[First], ColFrom, ColTo - ColFrom)
         else begin
           // step1: calculate total length of result string
-          TotalLen := Max(0, Length(Lines[First]) - ColFrom + 1);
-          for i := First + 1 to Last - 1 do
-            Inc(TotalLen, Length(Lines[i]));
+          TotalLen := Max(0, ExpandLines.AccessStringLength(First) - ColFrom + 1);
+          for I := First + 1 to Last - 1 do
+            Inc(TotalLen, ExpandLines.AccessStringLength(I));
           Inc(TotalLen, ColTo - 1);
-          Inc(TotalLen, Length(SLineBreak) * (Last - First));
+          Inc(TotalLen, Length(SLineBreak)*(Last - First));
+
           // step2: build up result string
           SetLength(Result, TotalLen);
           P := PWideChar(Result);
@@ -1961,66 +1981,74 @@ begin
 
           CopyAndForward(SLineBreak, 1, MaxInt, P);
 
-          for i := First + 1 to Last - 1 do
+          for I := First + 1 to Last - 1 do
           begin
-            CopyAndForward(Lines[i], 1, MaxInt, P);
+            CopyAndForward(Lines[I], 1, MaxInt, P);
             CopyAndForward(SLineBreak, 1, MaxInt, P);
           end;
           CopyAndForward(Lines[Last], 1, ColTo - 1, P);
         end;
+
+      // Columnar selections require much complex approach
       smColumn:
         begin
-          with BufferToDisplayPos(BlockBegin) do
+          with BufferToRealDisplayPos(BlockBegin) do
           begin
             First := Row;
             ColFrom := Column;
           end;
-          with BufferToDisplayPos(BlockEnd) do
+          with BufferToRealDisplayPos(BlockEnd) do
           begin
             Last := Row;
             ColTo := Column;
           end;
           if ColFrom > ColTo then
             SwapInt(ColFrom, ColTo);
+
           // step1: pre-allocate string large enough for worst case
-          TotalLen := ((ColTo - ColFrom) + Length(sLineBreak)) *
-            (Last - First +1);
+          TotalLen := ((ColTo - ColFrom) + Length(sLineBreak)) * (Last - First + 1);
           SetLength(Result, TotalLen);
-          P := PWideChar(Result);
+          P := PChar(Result);
 
           // step2: copy chunks to the pre-allocated string
           TotalLen := 0;
           for cRow := First to Last do
           begin
-            vAuxRowCol.Row := cRow;
-            vAuxRowCol.Column := ColFrom;
-            vAuxLineChar := DisplayToBufferPos(vAuxRowCol);
-            l := vAuxLineChar.Char;
-            s := Lines[vAuxLineChar.Line - 1];
+            with vAuxRowCol do
+            begin
+              Row := cRow;
+              Column := ColFrom;
+            end;
+            vAuxLineChar := RealDisplayToBufferPos(vAuxRowCol);
+            if IsWrappedRow(vAuxLineChar.Line, cRow) then
+              Continue;
+            L := vAuxLineChar.Char;
+            S := Lines[vAuxLineChar.Line - 1];
             vAuxRowCol.Column := ColTo;
-            r := DisplayToBufferPos(vAuxRowCol).Char;
-
-            vTrimCount := CopyPaddedAndForward(s, l, r - l, P);
-            TotalLen := TotalLen + (r - l) - vTrimCount + Length(sLineBreak);
+            R := RealDisplayToBufferPos(vAuxRowCol).Char;
+            vTrimCount := CopyPaddedAndForward(S, L, R - L, P);
+            TotalLen := TotalLen + (R - L) - vTrimCount + Length(sLineBreak);
             CopyAndForward(sLineBreak, 1, MaxInt, P);
           end;
-          SetLength(Result, TotalLen - Length(sLineBreak));
+          SetLength(Result, Max(TotalLen - Length(sLineBreak), 0));
         end;
       smLine:
         begin
           // If block selection includes LastLine,
-          // line break code(s) of the last line will not be added.
+          // line break code(s) of the last line will not be added
+
           // step1: calculate total length of result string
-          for i := First to Last do
-            Inc(TotalLen, Length(Lines[i]) + Length(SLineBreak));
-          if Last = Lines.Count then
+          for I := First to Last do
+            Inc(TotalLen, Length(Lines[I]) + Length(SLineBreak));
+          if Last = Pred(Lines.Count) then
             Dec(TotalLen, Length(SLineBreak));
+
           // step2: build up result string
           SetLength(Result, TotalLen);
           P := PWideChar(Result);
-          for i := First to Last - 1 do
+          for I := First to Last - 1 do
           begin
-            CopyAndForward(Lines[i], 1, MaxInt, P);
+            CopyAndForward(Lines[I], 1, MaxInt, P);
             CopyAndForward(SLineBreak, 1, MaxInt, P);
           end;
           CopyAndForward(Lines[Last], 1, MaxInt, P);
@@ -2029,6 +2057,36 @@ begin
         end;
     end;
   end;
+
+var
+  I: Integer;
+  BB, BE: TBufferCoord;
+begin
+  if not SelAvail and not FSelections then
+    Result := EmptyStr
+  else if FSelections then
+  begin
+    Result := EmptyStr;
+    BB := BlockBegin;
+    BE := BlockEnd;
+    try
+      for I := 0 to High(FCarets) do
+        if not CaretsEqual(FCarets[I].bcStart, FCarets[I].bcEnd) then
+        begin
+          FBlockBegin := FCarets[I].bcStart;
+          FBlockEnd := FCarets[I].bcEnd;
+          Result := Result + DoGetSelText + SLineBreak;
+        end;
+      // Remove last added EOL
+      if Length(Result) >= Length(SLineBreak) then
+        SetLength(Result, Length(Result) - Length(SLineBreak));
+    finally
+      FBlockBegin := BB;
+      FBlockEnd := BE;
+    end;
+  end
+  else
+    Result := DoGetSelText;
 end;
 
 function TCustomSynEdit.GetUnRealLineNumber(aLine: Integer): Integer;
@@ -2265,7 +2323,7 @@ end;
 
 procedure TCustomSynEdit.KeyDown(var Key: Word; Shift: TShiftState);
 var
-  Data: pointer;
+  Data: Pointer;
   C: WideChar;
   Cmd: TSynEditorCommand;
   {$IFDEF SYN_LINUX}
@@ -11496,6 +11554,37 @@ begin
     Result := FWordWrapPlugin.BufferToDisplayPos(TBufferCoord(Result));
 end;
 
+function TCustomSynEdit.BufferToRealDisplayPos(
+  const P: TBufferCoord): TDisplayCoord;
+var
+  I, J: Integer;
+  StrA: PBArray;
+begin
+  { Fallback }
+  Result := TDisplayCoord(P);
+
+  { Get row }
+  if not WordWrap then
+    Result.Row := P.Line;
+
+  { Get column }
+  if P.Line - 1 < FLines.Count then
+  begin
+    Result.Column := 1;
+    StrA := FLines.Analyzis[Pred(P.Line)];
+    J := Length(StrA^);
+    for I := 0 to P.Char - 2 do
+      if I < J then
+        Inc(Result.Column, StrA^[I])
+      else
+        Inc(Result.Column);
+  end;
+
+  { Get display coord in word wrap mode }
+  if WordWrap then
+    Result := FWordWrapPlugin.BufferToRealDisplayPos(TBufferCoord(Result));
+end;
+
 function TCustomSynEdit.DisplayToBufferPos(const p: TDisplayCoord): TBufferCoord;
 // DisplayToBufferPos takes a position on screen and transfrom it
 // into position of text
@@ -11921,6 +12010,40 @@ begin
     end;
   finally
     iDelKeys.Free;
+  end;
+end;
+
+function TCustomSynEdit.RealDisplayToBufferPos(
+  const P: TDisplayCoord): TBufferCoord;
+var
+  I, J, K: Integer;
+  StrA: PBArray;
+begin
+  { Get buffer coord in word wrap mode }
+  if WordWrap then
+    Result := FWordWrapPlugin.RealDisplayToBufferPos(P)
+
+  { In normal mode }
+  else begin
+    Result := TBufferCoord(P);
+    Result.Line := P.Row;
+  end;
+
+  { Get char }
+  if Result.Line <= Lines.Count then
+  begin
+    I := 0; K := 0;
+    StrA := FLines.Analyzis[Pred(Result.Line)];
+    J := Length(StrA^);
+    while K < Result.Char do
+    begin
+      if I < J then
+        Inc(K, StrA^[I])
+      else
+        Inc(K);
+      Inc(I);
+    end;
+    Result.Char := I;
   end;
 end;
 
