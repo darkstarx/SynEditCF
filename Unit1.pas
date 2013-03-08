@@ -51,10 +51,10 @@ begin
   myEditor.Anchors := [akLeft, akTop, akRight, akBottom];
   myEditor.BorderStyle := bsNone;
   myEditor.Visible := true;
-  myEditor.WordWrap := true;  // << слова делятся на части при переносе
-//  myEditor.DoubleBuffered := true;
-  myEditor.Gutter.Visible := true;  // << Добавлять строки, пока курсор не съедет вниз за пределы видимости
-                                    // << Вся панелька спрячется и больше не покажется - исправить подставу!
+//  myEditor.WordWrap := true;  // << слова делятся на части при переносе
+  myEditor.DoubleBuffered := true;
+  myEditor.Gutter.Visible := true;
+
   myEditor.Gutter.ShowLineNumbers := true;   // << здесь вроде всё норм
   myEditor.Gutter.ShowLineStates := true;    // << эта фигня не работает
   myEditor.Gutter.ShowCodeFolding := true;   // << эта фигня тоже не работает
@@ -67,8 +67,8 @@ begin
   // Если попытаться вставить текст этого модуля, появятся иероглифы и другая дрянь
 
   myHighlighter := TSynUniSyn.Create(myEditor);
-  myHighlighter.LoadGrammar('..\..\SQL.package\sql.grammar',
-    true, nil, 'sql', [suloExternalGrammars], '');
+  myHighlighter.LoadGrammar('..\..\Delphi.package\delphi.grammar',
+    true, nil, 'Delphi', [suloExternalGrammars], '');
 
   myEditor.Highlighter := myHighlighter;
 

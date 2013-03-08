@@ -2496,8 +2496,6 @@ begin
     FActiveSelectionMode := vOldMode;
     InvalidateRect(FInvalidateRect, False);
     FillChar(FInvalidateRect, SizeOf(TRect), 0);
-    if FGutter.ShowLineNumbers and FGutter.AutoSize then
-      FGutter.AutoSizeDigitCount(Lines.Count);
     if not (eoScrollPastEof in Options) then
       TopLine := TopLine;
   end;
@@ -5319,6 +5317,7 @@ begin
   begin
     Delta := TopLine - Value;
     FTopLine := Value;
+    FGutter.AutoSizeDigitCount(Min(FTopLine + FLinesInWindow, FLines.Count));
 
     if Abs(Delta) < FLinesInWindow then
 {$IFDEF SYN_CLX}
@@ -9106,8 +9105,7 @@ var
 begin
   if not (csLoading in ComponentState) then
   begin
-    if FGutter.ShowLineNumbers and FGutter.AutoSize then
-      FGutter.AutoSizeDigitCount(Lines.Count);
+    FGutter.AutoSizeDigitCount(Min(FTopLine + FLinesInWindow, FLines.Count));
     nW := GetGutterWidth;
     if nW = GutterWidth then
       InvalidateGutter
@@ -9580,7 +9578,6 @@ procedure TCustomSynEdit.SizeOrFontChanged(bFont: boolean);
 begin
   if HandleAllocated and (FCharWidth <> 0) then
   begin
-    FCharsInWindow := Max(ClientWidth - FGutterWidth - 2, 0) div FCharWidth;
     FLinesInWindow := ClientHeight div FTextHeight;
     if WordWrap then
     begin
@@ -9604,6 +9601,8 @@ begin
       LeftChar := LeftChar;
     if not (eoScrollPastEof in Options) then
       TopLine := TopLine;
+    FGutter.AutoSizeDigitCount(Min(FTopLine + FLinesInWindow, FLines.Count));
+    FCharsInWindow := Max(ClientWidth - FGutterWidth - 2, 0) div FCharWidth;
   end;
 end;
 

@@ -119,11 +119,11 @@ type
     FShowCodeFolding: Boolean;
 
     FLineNumberStart: Integer;
-    FLeadingZeros: boolean;
-    FZeroStart: boolean;
+    FLeadingZeros: Boolean;
+    FZeroStart: Boolean;
     FDigitCount: Integer;
     FAutoSizeDigitCount: Integer;
-    FAutoSize: boolean;
+    FAutoSize: Boolean;
 
     FCursor: TCursor;
     FVisible: Boolean;
@@ -215,12 +215,12 @@ type
   TSynBookMarkOpt = class(TPersistent)
   private
     FBookmarkImages: TImageList;
-    FDrawBookmarksFirst: boolean;
+    FDrawBookmarksFirst: Boolean;
     FEnableKeys: Boolean;
     FGlyphsVisible: Boolean;
     FLeftMargin: Integer;
     FOwner: TComponent;
-    FXoffset: Integer;
+    FXOffset: Integer;
     FOnChange: TNotifyEvent;
     procedure SetBookmarkImages(const Value: TImageList);
     procedure SetDrawBookmarksFirst(Value: boolean);
@@ -240,7 +240,7 @@ type
     property GlyphsVisible: Boolean
       read FGlyphsVisible write SetGlyphsVisible default True;
     property LeftMargin: Integer read FLeftMargin write SetLeftMargin default 2;
-    property Xoffset: Integer read FXoffset write SetXOffset default 12;
+    property XOffset: Integer read FXOffset write SetXOffset default 12;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
