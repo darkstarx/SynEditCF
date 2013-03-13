@@ -38,7 +38,7 @@ end;
 
 procedure TForm1.FormClick(Sender: TObject);
 begin
-  myEditor.Gutter.Visible := true;
+  Caption := IntToStr(myHighlighter.GetCacheSize());
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -46,6 +46,8 @@ begin
   myEditor := TSynEdit.Create(self);
 
   myEditor.Parent := self;
+  myEditor.Font.Name := 'Consolas';
+  myEditor.SelectedColor.Background := $a56d53;
   myEditor.Width := 600;
   myEditor.Height := Self.ClientHeight;
   myEditor.Anchors := [akLeft, akTop, akRight, akBottom];

@@ -47,7 +47,6 @@ interface
 uses
 {$IFDEF SYN_CLX}
   Qt,
-  Types,
   QGraphics,
   QControls,
   QForms,
@@ -84,6 +83,7 @@ uses
   SynEditMiscClasses,
   SynEditKeyCmds,
 {$ENDIF}
+  Types,
   Classes,
   SysUtils;
 

@@ -59,7 +59,6 @@ uses
   QControls,
   QGraphics,
   QForms,
-  Types,
   QSynEditPrint,
 {$ELSE}
   {$IFDEF SYN_COMPILER_7}
@@ -72,6 +71,7 @@ uses
   Forms,
   SynEditPrint,
 {$ENDIF}
+  Types,
   Classes,
   SysUtils;
 

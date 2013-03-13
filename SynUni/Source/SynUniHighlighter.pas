@@ -204,10 +204,12 @@ type
       PrependScope: UTF8String = '');
     procedure SaveGrammar(const AFileName: String);
 
+    function GetCacheSize(): Integer;
+
     property FileName: String read fFileName write fFileName;
     property Rules: TSynRange read fRules;
     property OnExternalGrammar: TSynUniExternalGrammarEvent
-      write fOnExternalGrammar;
+      read fOnExternalGrammar write fOnExternalGrammar;
     property Cache[Index: Integer]: PSynUniCacheItem read GetCacheItem;
   end;
 
@@ -298,6 +300,11 @@ begin
     Result := nil
   else
     Result := PSynUniCacheItem(fCache[Index]);
+end;
+
+function TSynUniSyn.GetCacheSize: Integer;
+begin
+  Result := fCache.Count;
 end;
 
 // -----------------------------------------------------------------------------
@@ -2142,7 +2149,7 @@ begin
     #10: LFProc;
     WideNbsp: NbspProc;
 
-    { If current chat is a whitespace }
+    { If current char is a whitespace }
     else if IsWhiteChar(fLine[Run]) then
       SpaceProc
 

@@ -1619,7 +1619,7 @@ begin
   if Assigned(FEvaluator) then
   begin
     Match := TMatch.Create(Self, FSubject, Offset, Len);
-    Result := FEvaluator(Match);
+    Result := UTF8String(FEvaluator(Match));
   end;
 
   Delete(FSubject, Offset, Len);
@@ -1782,7 +1782,7 @@ begin
     PrevAt := 1;
     while True do
     begin
-      SL.Add(Copy(Input, PrevAt, Match.Index - PrevAt));
+      SL.Add(Copy(UnicodeString(Input), PrevAt, Match.Index - PrevAt));
       PrevAt := Match.Index + Match.Length;
 
       for I := 1 to Match.Groups.Count - 1 do
@@ -1800,11 +1800,11 @@ begin
       if (not Match.Success) then
         Break;
     end;
-    SL.Add(Copy(Input, PrevAt, Length(Input) - PrevAt + 1));
+    SL.Add(Copy(UnicodeString(Input), PrevAt, Length(Input) - PrevAt + 1));
 
     SetLength(Result, SL.Count);
     for I := 0 to SL.Count - 1 do
-      Result[I] := SL[I];
+      Result[I] := UTF8String(SL[I]);
   finally
     SL.Free;
   end;

@@ -3867,7 +3867,7 @@ var
     // Now loop through all the lines. The indices are valid for Lines.
     for nLine := vFirstLine to vLastLine do
     begin
-      sLine := TSynEditStringList(Lines).ExpandedStrings[nLine - 1];
+      sLine := Lines.ExpandedStrings[nLine - 1];
       sLineExpandedAtWideGlyphs := ExpandAtWideGlyphs(sLine);
       // determine whether will be painted with ActiveLineColor
       bCurrentLine := CaretY = nLine;
@@ -3999,7 +3999,7 @@ var
           if nLine = 1 then
             FHighlighter.ResetRange
           else
-            FHighlighter.SetRange(TSynEditStringList(Lines).Ranges[nLine - 2]);
+            FHighlighter.SetRange(Lines.Ranges[nLine - 2]);
           FHighlighter.SetLineExpandedAtWideGlyphs(sLine, sLineExpandedAtWideGlyphs,
             nLine - 1);
           // Try to concatenate as many tokens as possible to minimize the count
@@ -6219,15 +6219,32 @@ end;
 
 procedure TCustomSynEdit.ListDeleted(Sender: TObject; aIndex: Integer;
   aCount: Integer);
+var
+  aNativeIndex, Runner: Integer;
 begin
-  if Assigned(FHighlighter) and (Lines.Count > 0) then
-    ScanFrom(aIndex);
+  aNativeIndex := aIndex;
+  if Assigned(FHighlighter) then
+  begin
+    aIndex := Max(aIndex, 1);
+    FHighlighter.LinesDeleted(aIndex, aCount);
+    if Lines.Count > 0 then
+    begin
+      Runner := ScanFrom(Pred(aIndex));
+      { This is necessary because a line can be deleted with ecDeleteChar
+        command and above, what've done, is rescanned a line joined with deleted
+        one. But if range on that line hadn't changed, it still could've been
+        changed on lines below. In case if range on line with join had changed
+        the above rescan already did the job }
+      if Runner = Pred(aIndex) then
+        ScanFrom(aIndex);
+    end;
+  end;
 
   if WordWrap then
-    FWordWrapPlugin.LinesDeleted(aIndex, aCount);
+    FWordWrapPlugin.LinesDeleted(aNativeIndex, aCount);
 
-  InvalidateLines(aIndex + 1, MaxInt);
-  InvalidateGutterLines(aIndex + 1, MaxInt);
+  InvalidateLines(aNativeIndex + 1, MaxInt);
+  InvalidateGutterLines(aNativeIndex + 1, MaxInt);
 end;
 
 procedure TCustomSynEdit.ListInserted(Sender: TObject; Index: Integer;
@@ -6272,7 +6289,7 @@ begin
   vEndLine := Min(Index + 1, FLines.Count);
   if Assigned(FHighlighter) then
   begin
-    FHighlighter.LinesPutted(Index, ACount);
+    FHighlighter.LinesPutted(Index, aCount);
 
     vEndLine := Max(vEndLine, ScanFrom(Index) + 1);
     // If this editor is chained then the real owner of text buffer will probably

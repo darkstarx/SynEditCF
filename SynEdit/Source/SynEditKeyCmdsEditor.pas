@@ -70,8 +70,11 @@ uses
   ExtCtrls,
   SynEditKeyCmds,
 {$ENDIF}
-  SysUtils,
   Types,
+{$IFDEF SYN_COMPILER_15_UP}
+  UITypes,
+{$ENDIF}
+  SysUtils,
   Classes;
 
 type

@@ -68,6 +68,10 @@ unit SynTextDrawer;
 interface
 
 uses
+{$IFDEF SYN_COMPILER_15_UP}
+  Types,
+  UITypes,
+{$ENDIF}
   SynUnicode,
   SysUtils,
   Classes,
