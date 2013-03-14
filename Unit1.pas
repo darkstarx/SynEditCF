@@ -69,8 +69,8 @@ begin
   // Если попытаться вставить текст этого модуля, появятся иероглифы и другая дрянь
 
   myHighlighter := TSynUniSyn.Create(myEditor);
-  myHighlighter.LoadGrammar('..\..\Delphi.package\delphi.grammar',
-    true, nil, 'Delphi', [suloExternalGrammars], '');
+  myHighlighter.LoadGrammar('..\..\sql.package\sql.grammar',
+    true, nil, 'sql', [suloExternalGrammars], '');
 
   myEditor.Highlighter := myHighlighter;
 

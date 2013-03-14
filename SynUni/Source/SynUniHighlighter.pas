@@ -856,6 +856,7 @@ var
 
     var
       Pattern: UTF8String;
+      MatchIndex: Integer;
     begin
       { From where to search? }
       if Open then
@@ -875,39 +876,42 @@ var
       { Look for match }
       Match := TRegex.Match(S, Pattern, GetRegexOptions(Range),
         I, Length(S));
+      { This is necessary for matching by `end of string` pattern ($). In this
+        case the ondex of match will equal Length(S)+1, so we must fetch minimum
+        between Match.Index and Count values. }
+      MatchIndex := Min(Match.Index, Count);
 
       { This check is necessary in case when range opens and closes
         with the same token and these tokens are not inside a range }
-      if Match.Success and (Match.Index <= Count)
+      if Match.Success and (MatchIndex <= Count)
         and (Length(fMap^) > 0)
         and not (stoInside in Token.Options)
         and (fMap^[High(fMap^)].ARange = Range)
         and (fMap^[High(fMap^)].AOpen = False)
-        and (fMap^[High(fMap^)].AIndex = Match.Index)
+        and (fMap^[High(fMap^)].AIndex = MatchIndex)
       then
         Match := TRegex.Match(S, Pattern, GetRegexOptions(Range),
           I + fMap^[High(fMap^)].ALength, Length(S));
 
       { This check is necessary in case when range opens and closes
         with the same token and these tokens are not inside a range }
-      if Match.Success and (Match.Index <= Count)
+      if Match.Success and (MatchIndex <= Count)
         and (Length(fMap^) > 0)
         and (stoInside in Token.Options) and not (stoInside in fMap^[High(fMap^)].AToken.Options)
         and (fMap^[High(fMap^)].ARange <> Range)
         and Open and (fMap^[High(fMap^)].AOpen = False)
-        and (fMap^[High(fMap^)].AIndex = Match.Index)
+        and (fMap^[High(fMap^)].AIndex = MatchIndex)
         and (not (sroCanBeInsideToken in Range.Options))
       then
         Match := TRegex.Match(S, Pattern, GetRegexOptions(Range),
           I + fMap^[High(fMap^)].ALength, Length(S));
 
       { Add to temporary maps }
-      if Match.Success and
-        ((Match.Index <= Count) or (Match.Index = Length(S) + 1)) then
+      if Match.Success and (MatchIndex <= Count) then
       begin
 
         { Add match }
-        AddRangeMatch(Temp, Match.Index, Match.Length, Range,
+        AddRangeMatch(Temp, MatchIndex, Match.Length, Range,
           Token, Open, Match.Value);
 
         { Add captures }
