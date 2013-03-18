@@ -53,7 +53,7 @@ begin
   myEditor.Anchors := [akLeft, akTop, akRight, akBottom];
   myEditor.BorderStyle := bsNone;
   myEditor.Visible := true;
-//  myEditor.WordWrap := true;  // << слова делятся на части при переносе
+  myEditor.WordWrap := true;  // << слова делятся на части при переносе
   myEditor.DoubleBuffered := true;
   myEditor.Gutter.Visible := true;
 
@@ -66,18 +66,16 @@ begin
 
   // SpellChecker тоже нихрена не работает, его пока вообще нет в SynEdit-е
 
-  // Если попытаться вставить текст этого модуля, появятся иероглифы и другая дрянь
-
   myHighlighter := TSynUniSyn.Create(myEditor);
-  myHighlighter.LoadGrammar('..\..\sql.package\sql.grammar',
-    true, nil, 'sql', [suloExternalGrammars], '');
+  myHighlighter.LoadGrammar('..\..\delphi.package\delphi.grammar',
+    true, nil, 'delphi', [suloExternalGrammars], '');
 
   myEditor.Highlighter := myHighlighter;
 
   myTheme := TSynHighlighterTheme.Create('..\..\themes\Alpine.colors');
   myHighlighter.LoadFromFile(myTheme);
 
-  myEditor.Text := 'select * from myTable' + #13#10 + 'where Name like ''%world!'';';
+  myEditor.Text := 'select * from myTable where Name like ''%world!'';';
 end;
 
 end.

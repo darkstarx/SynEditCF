@@ -304,6 +304,7 @@ type
     function GetEol: Boolean; virtual; abstract;
     function GetExpandedToken: UnicodeString; virtual;
     function GetExpandedTokenPos: Integer; virtual;
+    function GetExpandedTokenLen: Integer; virtual;
     function GetKeyWords(TokenKind: Integer): UnicodeString; virtual;
     function GetRange: Pointer; virtual;
     function GetToken: UnicodeString; virtual;
@@ -1242,6 +1243,14 @@ begin
   SetLength(Result, Len);
   if Len > 0 then
     WStrLCopy(@Result[1], fExpandedLine + fExpandedTokenPos, Len);
+end;
+
+function TSynCustomHighlighter.GetExpandedTokenLen: Integer;
+begin
+  if FExpandedLine = nil then
+    Result := Run - FTokenPos
+  else
+    Result := ExpandedRun - FExpandedTokenPos;
 end;
 
 class function TSynCustomHighlighter.GetFriendlyLanguageName: UnicodeString;

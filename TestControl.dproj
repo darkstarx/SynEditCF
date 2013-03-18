@@ -134,6 +134,8 @@
         <DCCReference Include="Unit1.pas">
             <Form>Form1</Form>
         </DCCReference>
+        <DCCReference Include="TBX\TBXUtils.pas"/>
+        <DCCReference Include="SynEdit\Source\SynEditOptions.pas"/>
         <None Include="SQL.package\sql.grammar"/>
         <None Include="themes\Alpine.colors"/>
         <None Include="Delphi.package\delphi.grammar"/>

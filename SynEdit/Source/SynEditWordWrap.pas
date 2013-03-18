@@ -219,7 +219,7 @@ begin
 
     { Find indent in aligned wrap mode }
     if cRow > vStartRow then
-      if (eoAlignedWrap in fEditor.Options) and (nIndent = 0) then
+      if (eoAlignedWrap in FEditor.Options) and (nIndent = 0) then
         nIndent := GetLeadingExpandedLength(fEditor.Lines.List^[APos.Line - 1].fString, fEditor.TabWidth);
 
     { Found }

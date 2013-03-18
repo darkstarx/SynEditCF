@@ -49,6 +49,7 @@ function  NearestLighten(C: TColor; Amount: Integer): TColor;
 function  NearestMixedColor(C1, C2: TColor; W1: Integer): TColor;
 function  ColorIntensity(C: TColor): Integer;
 function  IsDarkColor(C: TColor; Threshold: Integer = 100): Boolean;
+function  IsVeryDarkColor(C: TColor): Boolean;
 function  Blend(C1, C2: TColor; W1: Integer): TColor;
 procedure SetContrast(var Color: TColor; BkgndColor: TColor; Threshold: Integer);
 function  GetBGR(C: TColorRef): Cardinal;
@@ -230,6 +231,13 @@ begin
   if C < 0 then C := GetSysColor(C and $FF);
   Threshold := Threshold shl 8;
   Result := ((C and $FF) * 76 + (C shr 8 and $FF) * 150 + (C shr 16 and $FF) * 30 ) < Threshold;
+end;
+
+function IsVeryDarkColor(C: TColor): Boolean;
+begin
+  if C < 0 then C := GetSysColor(C and $FF);
+  Result := ((C and $FF) < $21) and ((C shr 8 and $FF) < $21) and
+    ((C shr 16 and $FF) < $21);
 end;
 
 function Blend(C1, C2: TColor; W1: Integer): TColor;

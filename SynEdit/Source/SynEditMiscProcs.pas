@@ -82,6 +82,8 @@ function Max(x, y: Integer): Integer;
 function Min(x, y: Integer): Integer;
 {$ENDIF}
 
+function ExpandedPos(const Start, Pos: Integer; const Analyzis: PBArray): Integer;
+function RealPos(Start, Pos: Integer; const Analyzis: PBArray): Integer;
 function CountUTF8Chars(const S: UTF8String; Border: Integer;
   Start: Integer = 1): Integer;
 function CountUnicodeChars(const S: UTF8String; Border: Integer;
@@ -267,6 +269,31 @@ function MinMax(x, mi, ma: Integer): Integer;
 begin
   x := Min(x, ma);
   Result := Max(x, mi);
+end;
+
+// -----------------------------------------------------------------------------
+// Get expanded pos (length) from analyzis
+function ExpandedPos(const Start, Pos: Integer;
+  const Analyzis: PBArray): Integer;
+var
+  I: Integer;
+begin
+  Result := 0;
+  if Analyzis <> nil then
+    for I := Start to Min(Pred(Pos), High(Analyzis^)) do
+      Inc(Result, Analyzis^[I]);
+end;
+
+function RealPos(Start, Pos: Integer; const Analyzis: PBArray): Integer;
+begin
+  Result := 0;
+  Start := Pred(Start);
+  if Analyzis <> nil then
+    while Pos > 0 do
+    begin
+      Dec(Pos, Analyzis^[Start]);
+      Inc(Start); Inc(Result);
+    end;
 end;
 
 // -----------------------------------------------------------------------------

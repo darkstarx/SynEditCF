@@ -52,7 +52,9 @@ uses
   RegularExpressions in 'regex\RegularExpressions.pas',
   SynEditCodeFolding in 'SynEdit\Source\SynEditCodeFolding.pas',
   SynHighlighterMulti in 'SynEdit\Source\SynHighlighterMulti.pas',
-  Unit1 in 'Unit1.pas' {Form1};
+  Unit1 in 'Unit1.pas' {Form1},
+  TBXUtils in 'TBX\TBXUtils.pas',
+  SynEditOptions in 'SynEdit\Source\SynEditOptions.pas';
 
 {$R *.res}
 
